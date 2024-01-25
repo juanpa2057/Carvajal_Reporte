@@ -12,8 +12,8 @@ Procedimiento para generar informes:
 9. Asegurarse de estar en el directorio un nivel por encima de la carpeta ../main
 10. Correr el comando: "jb build main" para compilar los notebooks
 11. Hacer commit y push de los cambios a github
-12. Correr el comando: "ghp-import -n -p -f main/\_build/html" para cargar el informe a GitHub Pages
-13. Correr el comando: correr el comando "jb build main/ --builder pdfhtml" crear el informe en PDF
+12. Correr el comando: "ghp-import -n -p -f mynewbook/\_build/html" para cargar el informe a GitHub Pages
+13. Correr el comando: correr el comando "jb build mynewbook/ --builder pdfhtml" crear el informe en PDF
 
 Comentarios adicionales:
 Se puede usar el mismo informe para encontrar los hallazgos. Para esto se corre una vez con los hallazgos comentados en el \_toc.yml.

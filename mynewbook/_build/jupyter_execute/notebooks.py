@@ -68,7 +68,7 @@ def show_response_contents(df):
 # In[5]:
 
 
-DEVICE_NAME = 'Reporte trimestral Carvajal'
+DEVICE_NAME = 'Reporte Carvajal'
 
 
 # In[6]:
@@ -186,7 +186,7 @@ mapeo = {
     "ea-extrusora-welex": "energia activa extrusora",
     "ea-horno-recocido": "energia activa horno recocido",
     "ea-termoformadora": "energia activa termoformadora",
-    "ea-tubos-colapsibles": "energia activa colapsibles",
+    "ea-tubos-colapsibles": "energia activa linea 7",
     "ea-ventilador-torre": "energia activa ventilador torres"
 }
 
@@ -210,7 +210,7 @@ consumo_maquinas['variable'] = consumo_maquinas['variable'].replace(mapeo)
 
 # ## Informe Gestión de Energia
 
-# A continuación, encontrarás un resumen de la distribución del consumo de energía por mes correspondiente al monitoreo de energía (kWh) al trimestre agosto a octubre de 2023.
+# A continuación, encontrarás un resumen de la distribución del consumo de energía por mes correspondiente al monitoreo de energía (kWh) entre agosto a diciembre de 2023.
 
 # In[15]:
 
@@ -245,9 +245,9 @@ fig.update_layout(
 fig.show()
 
 
-# Se representa el consumo acumulado de energía en kWh por máquina durante los meses de agosto, septiembre y octubre del 2023:
+# Se representa el consumo acumulado de energía en kWh por máquina durante los meses de agosto a diciembre del 2023:
 # 
-# - Energía Activa Extrusora: Esta máquina tiene la mayor parte del consumo con un 37% del total.
+# - Energía Activa Extrusora: Esta máquina tiene la mayor parte del consumo con un 38% del total.
 # - Energía Activa Chiller:: Esta máquina tiene el segundo mayor consumo con un 25% del total.
 # - Energía Activa Espumas: Esta máquina tiene el tercer mayor consumo con un 15% del total.
 # 
@@ -300,10 +300,10 @@ df_ea_pivot = df_ea_pivot.groupby('Mes').sum([columns_name])
 
 df_ea_pivot = df_ea_pivot.reset_index()
 
-df_ea_pivot['Mes'] = df_ea_pivot['Mes'].replace({'August': 'Agosto', 'October': 'Octubre', 'September': 'Septiembre'})
+df_ea_pivot['Mes'] = df_ea_pivot['Mes'].replace({'August': 'Agosto', 'October': 'Octubre', 'September': 'Septiembre', 'November': 'Noviembre', 'December': 'Diciembre'})
 
 # Definir el nuevo orden de los meses
-nuevo_orden_meses = ['Agosto', 'Septiembre', 'Octubre']
+nuevo_orden_meses = ['Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
 
 # Cambiar el índice usando reindex
 df_ea_pivot = df_ea_pivot.set_index('Mes').reindex(nuevo_orden_meses).reset_index()
@@ -311,12 +311,23 @@ df_ea_pivot = df_ea_pivot.set_index('Mes').reindex(nuevo_orden_meses).reset_inde
 # Convertir la columna "Mes" en el índice
 df_ea_pivot = df_ea_pivot.set_index('Mes')
 
+# agrego esto:
 
-# Se presenta el consumo acumulado por proceso mensual, destacando que el mayor consumo de energía ocurrió en septiembre:
+dt_total = df_ea_pivot.copy()
+# Sumar a lo largo de las columnas y agregar una nueva columna "Total"
+dt_total['Total'] = df_ea_pivot.sum(axis=1)
+
+# Resetear el índice para tener "variable" como una columna nuevamente
+dt_total.reset_index(inplace=True)
+
+
+# Se presenta el consumo acumulado por proceso mensual, destacando que el mayor consumo de energía ocurrió en Octubre:
 # 
 # - Agosto: 358,213 kWh/mes
 # - Septiembre: 380,615 kWh/mes
-# - Octubre: 379,839 kWh/mes"
+# - Octubre: 393,443 kWh/mes"
+# - Noviembre: 390,716 kWh/mes"
+# - Diciembre: 342,421 kWh/mes"
 
 # In[20]:
 
@@ -532,7 +543,7 @@ fig.show()
 # 
 # - Distribución del consumo de energía por máquina y mes: El análisis muestra que la máquina "Energía Activa Extrusora" tiene el mayor consumo de energía, seguida por "Energía Activa Chiller" y "Energía Activa Espumas". Estas tres máquinas representan la mayor parte del consumo total de energía.
 # 
-# - El consumo de energía fue mayor en septiembre, seguido por octubre y agosto. Esto indica que septiembre fue el mes con mayor demanda de energía en el trimestre analizado.
+# - El consumo de energía fue mayor en octubre, seguido por noviembre y agosto. Esto indica que octubre  fue el mes con mayor demanda de energía analizado.
 # 
 # - Consumo por tipo de día: El análisis muestra que los días jueves y viernes tienen un mayor consumo de energía en comparación con los demás días de la semana. Los fines de semana, especialmente los domingos, tienen un consumo más bajo de energía.
 # 
