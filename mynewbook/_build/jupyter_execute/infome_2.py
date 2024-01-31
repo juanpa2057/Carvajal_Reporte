@@ -269,7 +269,7 @@ fig.show()
 
 # Agrupar por máquina y sumar la energía
 df_grouped = df_energia.groupby('variable').sum().reset_index()
-
+df_grouped['variable']=df_grouped['variable'].str.capitalize()
 # Crear el gráfico de torta
 fig = px.pie(df_grouped, values='value', names='variable', 
              title='Distribución del Consumo de Energía por Máquina',
@@ -381,7 +381,7 @@ ea_extrusora_dia = ea_extrusora_mean.groupby(["hour", "dow"])["value"].mean().re
 ea_horno_dia = ea_horno_mean.groupby(["hour", "dow"])["value"].mean().reset_index()
 ea_termo_dia = ea_termo_mean.groupby(["hour", "dow"])["value"].mean().reset_index()
 ea_tubos_dia = ea_tubos_month.groupby(["hour", "dow"])["value"].mean().reset_index()
-df_planta = df_planta.groupby(["hour", "dow"])["value"].mean().reset_index()
+df_planta = df_planta.groupby(["hour", "dow"])["value"].sum().reset_index()
 eficiencia_chiller_ok = eficiencia_chiller_ok.groupby(["hour", "dow"])["value"].mean().reset_index()
 consumo_maquinas = consumo_maquinas.groupby(["hour", "variable"])["value"].mean().reset_index()
 
@@ -423,32 +423,19 @@ fig = go.Figure(data=[trace1, trace2, trace3, trace4, trace5, trace6, trace7], l
 fig.show()
 
 
+# La gráfica anterior muestra la tendencia de los consumos medidos, en la cual se observa que los domingos tienen una disminución considerable de carga, lo cual puede corresponder a paradas de planta o procesos diferentes que se ejecuten estos días.
+
 # In[26]:
 
 
-fig = px.box(df_planta, x="dow", y="value", color="dow", points='all', category_orders={"dow": ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"]})
-fig.update_layout(
-    title='Consumo por tipo de día',
-    width=800,
-    height=600,
-    yaxis_title="Consumo kWh",
-    title_font_size=12,
-    xaxis_title="Día"
-)
-
-
-# La gráfica anterior muestra la tendencia de los consumos medidos, en la cual se observa que los domingos tienen una disminución considerable de carga, lo cual puede corresponder a paradas de planta o procesos diferentes que se ejecuten estos días.
-
-# In[27]:
-
-
 # Gráfico de áreas apiladas
+consumo_maquinas['variable'] = consumo_maquinas['variable'].str.capitalize()
 fig = px.area(consumo_maquinas, x='hour', y='value', color='variable', line_group='variable',
               labels={'value': 'Consumo (kWh)', 'hour': 'Hora del día'},
               title='Consumo Horario Planta por Proceso')
 
 fig.update_layout(
-    legend_title_text='Día de la Semana',
+    legend_title_text='Máquina',
     xaxis_title='Hora',
     yaxis_title='kWh',
 )
@@ -462,21 +449,36 @@ fig.show()
 
 # Consumo semana cada línea en el gráfico representa un día de la semana específico, y la posición de la línea en cada punto indica la cantidad de energía consumida en ese día de la semana en cada hora del día.
 
-# In[28]:
+# In[27]:
 
 
-#Planta
-fig = px.line(df_planta, x='hour', y='value', color='dow', # line_group='dow',               
-	labels={'Consumo': 'Consumo (ejemplo)', 'Hora': 'Hora del día'},               
-	title='Consumo horario por Día de la Semana Planta') 
-fig.update_layout(legend_title_text='Día de la Semana',xaxis_title = 'Hora',
-                  yaxis_title = 'kWh')
+trace1 = go.Scatter(y=df_planta[df_planta['dow']=='lunes']['value']/df_planta[df_planta['dow']=='lunes']['dow'].value_counts()[0],name='Lunes',marker_color='#f37620', mode='lines')
+trace2 = go.Scatter(y=df_planta[df_planta['dow']=='martes']['value']/df_planta[df_planta['dow']=='martes']['dow'].value_counts()[0],name='Martes',marker_color='#585a5b', mode='lines')
+trace3 = go.Scatter(y=df_planta[df_planta['dow']=='miércoles']['value']/df_planta[df_planta['dow']=='miércoles']['dow'].value_counts()[0],name='Miércoles',marker_color='#fec431', mode='lines')
+trace4 = go.Scatter(y=df_planta[df_planta['dow']=='jueves']['value']/df_planta[df_planta['dow']=='jueves']['dow'].value_counts()[0],name='Jueves',marker_color='#1fa1db', mode='lines')
+trace5 = go.Scatter(y=df_planta[df_planta['dow']=='viernes']['value']/df_planta[df_planta['dow']=='viernes']['dow'].value_counts()[0],name='Viernes',marker_color='#00be91', mode='lines')
+trace6 = go.Scatter(y=df_planta[df_planta['dow']=='sábado']['value']/df_planta[df_planta['dow']=='sábado']['dow'].value_counts()[0],name='Sábado',marker_color='#ca1e48',   mode='lines')
+trace7 = go.Scatter(y=df_planta[df_planta['dow']=='domingo']['value']/df_planta[df_planta['dow']=='domingo']['dow'].value_counts()[0],name='Domingo',marker_color='#19459a', mode='lines')
+
+layout = go.Layout(
+    title='Consumo horario por Día de la Semana Planta',
+    width=800,
+    height=600,
+    yaxis=dict(title="Consumo kWh"),
+    title_font=dict(size=16),
+    xaxis=dict(title="Hora"),
+    legend=dict(title="Día de la Semana")
+)
+
+fig = go.Figure(data=[trace1, trace2, trace3, trace4, trace5, trace6, trace7], layout=layout)
+
+# Show the figure
 fig.show()
 
 
 # **Chiller**
 
-# In[29]:
+# In[28]:
 
 
 #chiller efici
@@ -499,7 +501,7 @@ fig.show()
 
 # **Extrusora Welex 2501**
 
-# In[30]:
+# In[29]:
 
 
 #Extrusora
@@ -513,7 +515,7 @@ fig.show()
 
 # **Espuma**
 
-# In[31]:
+# In[30]:
 
 
 #Espumas
@@ -527,7 +529,7 @@ fig.show()
 
 # **Tubos Colapsibles**
 
-# In[32]:
+# In[31]:
 
 
 #tubos
@@ -541,7 +543,7 @@ fig.show()
 
 # **Termoformadora Gabler 2**
 
-# In[33]:
+# In[32]:
 
 
 #termo
@@ -555,7 +557,7 @@ fig.show()
 
 # **Horno Recocido linea 7**
 
-# In[34]:
+# In[33]:
 
 
 #Horno
@@ -569,7 +571,7 @@ fig.show()
 
 # **Bomba Torre**
 
-# In[35]:
+# In[34]:
 
 
 #Bomba de torre
