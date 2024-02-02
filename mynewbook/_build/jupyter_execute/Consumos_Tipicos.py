@@ -409,7 +409,7 @@ consumo_dia_turno_agregado = consumo_dia_turno.groupby(['dow', 'Turno']).sum().r
 
 # Crea el gráfico de barras utilizando Plotly Express
 fig = px.bar(consumo_dia_turno_agregado, x='Turno', y='Consumo de Energía (KWh)', color='dow',
-             title='Consumo de Energía por Máquina y Turno por Día',
+             title='Consumo de Energía por Turno y Día',
              labels={'Turno': 'Turno', 'Consumo de Energía (KWh)': 'Consumo (KWh)'},
              width=900, height=600)
 
