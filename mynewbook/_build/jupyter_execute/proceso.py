@@ -54,7 +54,6 @@ from plotly.subplots import make_subplots
 
 periodo_historico = cfg.BASELINE
 periodo_de_estudio = cfg.STUDY
-Turno = ['2023-12-01', '2023-12-31']
 
 
 # In[4]:
@@ -66,10 +65,12 @@ def show_response_contents(df):
     print(json.dumps(list(df['device'].unique()), sort_keys=True, indent=4))
 
 
+# ## Procesos
+
 # In[5]:
 
 
-DEVICE_NAME = 'Reporte Carvajal'
+DEVICE_NAME = 'Consumos Tipicos por Día'
 
 
 # In[6]:
@@ -186,14 +187,14 @@ valores_a_buscar = [
 ]
 
 mapeo = {
-    "ea-cvl-bomba-torre": "energia activa bomba torre",
-    "ea-chiller": "energia activa chiller",
-    "ea-espuma": "energia activa espuma",
-    "ea-extrusora-welex": "energia activa extrusora",
-    "ea-horno-recocido": "energia activa horno recocido",
-    "ea-termoformadora": "energia activa termoformadora",
-    "ea-tubos-colapsibles": "energia activa linea 7",
-    "ea-ventilador-torre": "energia activa ventilador torres"
+    "ea-cvl-bomba-torre": "Consumo bomba torre",
+    "ea-chiller": "Consumo chiller",
+    "ea-espuma": "Consumo espuma",
+    "ea-extrusora-welex": "Consumo extrusora",
+    "ea-horno-recocido": "Consumo horno recocido",
+    "ea-termoformadora": "Consumo termoformadora",
+    "ea-tubos-colapsibles": "Consumo linea 7",
+    "ea-ventilador-torre": "Consumo ventilador torres"
 }
 
 
@@ -210,17 +211,13 @@ df['variable'] = df['variable'].replace(mapeo)
 df_energia = df_ea_month[df_ea_month['variable'].isin(valores_a_buscar)]
 df_energia['variable'] = df_energia['variable'].replace(mapeo)
 
-
 turno = df_turno[df_turno['variable'].isin(valores_a_buscar)]
 turno['variable'] = turno['variable'].replace(mapeo)
+
 
 consumo_maquinas = df_planta[df_planta['variable'].isin(valores_a_buscar)]
 consumo_maquinas['variable'] = consumo_maquinas['variable'].replace(mapeo)
 
-
-# ## Informe Gestión de Energia
-
-# A continuación, encontrarás un resumen de la distribución del consumo de energía por mes correspondiente al monitoreo de energía (kWh) entre agosto a diciembre de 2023.
 
 # In[15]:
 
@@ -241,65 +238,10 @@ df_energia['value_formatted'] = df_energia['value'].round(0).apply(lambda x: f'{
 
 
 df_energia_pivot = df_energia.pivot_table(index= 'variable', columns='month', values='value_formatted', aggfunc='first')
-
-
-# In[17]:
-
-
-# Crear la tabla
-fig = go.Figure(data=[go.Table(
-    header=dict(values=['Proceso', 'Octubre', 'Noviembre', 'Diciembre']),
-    cells=dict(values=[df_energia_pivot.index, 
-                       df_energia_pivot[10],  # Usar los valores formateados
-                       df_energia_pivot[11],
-                       df_energia_pivot[12],]))
-])
-
-# Ajustar el diseño y formato
-fig.update_layout(
-    title='Datos de Consumo de Energía por Máquina y Mes',
-    font=dict(size=12),  # Ajustar el tamaño del texto
-    template='plotly_white'  # Cambiar el tema a plotly_white
-)
-
-# Mostrar la tabla
-fig.show()
-
-
-# Se representa el consumo acumulado de energía en kWh por máquina durante los meses de agosto a diciembre del 2023:
-# 
-# - Energía Activa Extrusora: Esta máquina tiene la mayor parte del consumo con un 38% del total.
-# - Energía Activa Chiller:: Esta máquina tiene el segundo mayor consumo con un 25% del total.
-# - Energía Activa Espumas: Esta máquina tiene el tercer mayor consumo con un 15% del total.
-# 
-# Las secciones restantes del gráfico representan otras máquinas con porcentajes de consumo menores. Este informe de gestión de energía proporciona una visión clara de cómo se distribuye el consumo de energía entre las diferentes máquinas en estos tres meses.
-
-# In[18]:
-
-
-# Agrupar por máquina y sumar la energía
-df_grouped = df_energia.groupby('variable').sum().reset_index()
-
-# Crear el gráfico de torta
-fig = px.pie(df_grouped, values='value', names='variable', 
-             title='Distribución del Consumo de Energía por Máquina',
-             labels={'variable': 'Máquina', 'value': 'Consumo de Energía'},
-             color_discrete_sequence=px.colors.qualitative.Set1)
-
-# Habilitar la interactividad para agregar/quitar máquinas
-fig.update_traces(hoverinfo='label+percent', textinfo='value+percent', pull=[0.1]*len(df_grouped))
-
-# Mostrar el gráfico
-fig.show()
-
-
-# In[19]:
-
-
 df_ea_pivot = df_energia.pivot_table(values='value', index='datetime', columns='variable')
 
 
-# In[20]:
+# In[17]:
 
 
 import calendar
@@ -316,7 +258,7 @@ df_ea_pivot = df_ea_pivot.groupby('Mes').sum([columns_name])
 #df_ea_pivot = df_ea_pivot.groupby(df_ea_pivot['Mes']).sum([columns_name])
 
 
-# In[21]:
+# In[18]:
 
 
 df_ea_pivot = df_ea_pivot.reset_index()
@@ -342,36 +284,7 @@ dt_total['Total'] = df_ea_pivot.sum(axis=1)
 dt_total.reset_index(inplace=True)
 
 
-# Se presenta el consumo acumulado por proceso mensual, destacando que el mayor consumo de energía ocurrió en Octubre:
-# 
-# - Agosto: 358,213 kWh/mes
-# - Septiembre: 380,615 kWh/mes
-# - Octubre: 393,443 kWh/mes"
-# - Noviembre: 390,716 kWh/mes"
-# - Diciembre: 342,421 kWh/mes"
-
-# In[22]:
-
-
-dt_total
-
-
-# In[23]:
-
-
-fig = px.bar(df_ea_pivot)
-fig.update_layout(
-        title = "Comsumo por Maquina",
-        width=800,
-        height=600,
-        yaxis_title="Consumo energia (kWh)",
-        showlegend = True,
-        legend_title="Proceso",
- 
-)
-
-
-# In[24]:
+# In[19]:
 
 
 ea_bomba_torre_mean['value'] = ea_bomba_torre_mean['value'].round(2)
@@ -387,7 +300,7 @@ consumo_maquinas['value'] = consumo_maquinas['value'].round(2)
 eficiencia_chiller_ok['value'] = eficiencia_chiller_ok['value'].round(2)
 
 
-# In[25]:
+# In[20]:
 
 
 ea_bomba_torre_dia = ea_bomba_torre_mean.groupby(["hour", "dow"])["value"].mean().reset_index()
@@ -397,198 +310,44 @@ ea_extrusora_dia = ea_extrusora_mean.groupby(["hour", "dow"])["value"].mean().re
 ea_horno_dia = ea_horno_mean.groupby(["hour", "dow"])["value"].mean().reset_index()
 ea_termo_dia = ea_termo_mean.groupby(["hour", "dow"])["value"].mean().reset_index()
 ea_tubos_dia = ea_tubos_month.groupby(["hour", "dow"])["value"].mean().reset_index()
-df_planta = df_planta.groupby(["hour", "dow"])["value"].mean().reset_index()
+df_planta = df_planta.groupby(["hour", "dow"])["value"].sum().reset_index()
 eficiencia_chiller_ok = eficiencia_chiller_ok.groupby(["hour", "dow"])["value"].mean().reset_index()
 consumo_maquinas = consumo_maquinas.groupby(["hour", "variable"])["value"].mean().reset_index()
 
 
 
-# #### Consumo Tipico por día Para Carvajal
+# Consumo semana cada línea en el gráfico representa un día de la semana específico, y la posición de la línea en cada punto indica la cantidad de energía consumida en ese día de la semana en cada hora del día.
 
-# Presentamos el análisis del consumo de energía de la planta clasificado por tipo de día. Durante el trimestre examinado, se observa que la planta experimentó un mayor consumo de energía los días viernes y jueves. Asimismo, se destaca una disminución en el consumo durante los fines de semana, siendo el domingo el día con menor consumo, seguido por el sábado.
-
-# In[26]:
+# In[21]:
 
 
-import plotly.graph_objects as go
+trace1 = go.Scatter(y=df_planta[df_planta['dow']=='lunes']['value']/df_planta[df_planta['dow']=='lunes']['dow'].value_counts()[0],name='Lunes',marker_color='#f37620', mode='lines')
+trace2 = go.Scatter(y=df_planta[df_planta['dow']=='martes']['value']/df_planta[df_planta['dow']=='martes']['dow'].value_counts()[0],name='Martes',marker_color='#585a5b', mode='lines')
+trace3 = go.Scatter(y=df_planta[df_planta['dow']=='miércoles']['value']/df_planta[df_planta['dow']=='miércoles']['dow'].value_counts()[0],name='Miércoles',marker_color='#fec431', mode='lines')
+trace4 = go.Scatter(y=df_planta[df_planta['dow']=='jueves']['value']/df_planta[df_planta['dow']=='jueves']['dow'].value_counts()[0],name='Jueves',marker_color='#1fa1db', mode='lines')
+trace5 = go.Scatter(y=df_planta[df_planta['dow']=='viernes']['value']/df_planta[df_planta['dow']=='viernes']['dow'].value_counts()[0],name='Viernes',marker_color='#00be91', mode='lines')
+trace6 = go.Scatter(y=df_planta[df_planta['dow']=='sábado']['value']/df_planta[df_planta['dow']=='sábado']['dow'].value_counts()[0],name='Sábado',marker_color='#ca1e48',   mode='lines')
+trace7 = go.Scatter(y=df_planta[df_planta['dow']=='domingo']['value']/df_planta[df_planta['dow']=='domingo']['dow'].value_counts()[0],name='Domingo',marker_color='#19459a', mode='lines')
 
-colores_Celsia = ['#f37620', '#585a5b', '#fec431', '#1fa1db', '#00be91', '#ca1e48', '#19459a', '#ef966e', '#949495', '#fae364']
-
-# Create the go.Box trace
-trace1 = go.Box(y=df_planta[df_planta['dow']=='lunes']['value']/df_planta[df_planta['dow']=='lunes']['dow'].value_counts()[0],boxpoints='all',name='Lunes',marker_color='#f37620')
-trace2 = go.Box(y=df_planta[df_planta['dow']=='martes']['value']/df_planta[df_planta['dow']=='martes']['dow'].value_counts()[0],boxpoints='all',name='Martes',marker_color='#585a5b')
-trace3 = go.Box(y=df_planta[df_planta['dow']=='miércoles']['value']/df_planta[df_planta['dow']=='miércoles']['dow'].value_counts()[0],boxpoints='all',name='Miércoles',marker_color='#fec431')
-trace4 = go.Box(y=df_planta[df_planta['dow']=='jueves']['value']/df_planta[df_planta['dow']=='jueves']['dow'].value_counts()[0],boxpoints='all',name='Jueves',marker_color='#1fa1db')
-trace5 = go.Box(y=df_planta[df_planta['dow']=='viernes']['value']/df_planta[df_planta['dow']=='viernes']['dow'].value_counts()[0],boxpoints='all',name='Viernes',marker_color='#00be91')
-trace6 = go.Box(y=df_planta[df_planta['dow']=='sábado']['value']/df_planta[df_planta['dow']=='sábado']['dow'].value_counts()[0],boxpoints='all',name='Sábado',marker_color='#ca1e48')
-trace7 = go.Box(y=df_planta[df_planta['dow']=='domingo']['value']/df_planta[df_planta['dow']=='domingo']['dow'].value_counts()[0],boxpoints='all',name='Domingo',marker_color='#19459a')
-
-# Create the layout
 layout = go.Layout(
-    title='Consumo por tipo de día',
+    title='Consumo horario por Día de la Semana Planta',
     width=800,
     height=600,
     yaxis=dict(title="Consumo kWh"),
-    title_font=dict(size=12)
+    title_font=dict(size=16),
+    xaxis=dict(title="Hora"),
+    legend=dict(title="Día de la Semana")
 )
 
-# Create the figure
 fig = go.Figure(data=[trace1, trace2, trace3, trace4, trace5, trace6, trace7], layout=layout)
 
 # Show the figure
 fig.show()
 
 
-# In[27]:
-
-
-fig = px.box(df_planta, x="dow", y="value", color="dow", points='all', category_orders={"dow": ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"]})
-fig.update_layout(
-    title='Consumo por tipo de día',
-    width=800,
-    height=600,
-    yaxis_title="Consumo kWh",
-    title_font_size=12,
-    xaxis_title="Día"
-)
-
-
-# La gráfica anterior muestra la tendencia de los consumos medidos, en la cual se observa que los domingos tienen una disminución considerable de carga, lo cual puede corresponder a paradas de planta o procesos diferentes que se ejecuten estos días.
-
-# In[28]:
-
-
-# Gráfico de áreas apiladas
-fig = px.area(consumo_maquinas, x='hour', y='value', color='variable', line_group='variable',
-              labels={'value': 'Consumo (kWh)', 'hour': 'Hora del día'},
-              title='Consumo Horario Planta por Proceso')
-
-fig.update_layout(
-    legend_title_text='Día de la Semana',
-    xaxis_title='Hora',
-    yaxis_title='kWh',
-)
-
-fig.show()
-
-
-# Consumo Horario Planta por Proceso: muestra la distribución del consumo de energía en la planta a lo largo del día, desglosado por proceso. Cada área en el gráfico representa un proceso específico, y la altura de cada área indica la cantidad de energía consumida en ese proceso en cada hora del día.
-
-# In[29]:
-
-
-import pandas as pd
-import plotly.express as px
-
-# Define la función para asignar etiquetas de turno
-def asignar_turno(hora):
-    if 6 <= hora < 14:
-        return 'Primer Turno'
-    elif 14 <= hora < 22:
-        return 'Segundo Turno'
-    else:
-        return 'Tercer Turno'
-
-# Aplica la función para crear la nueva columna 'Turno'
-turno['Turno'] = turno['hour'].apply(asignar_turno)
-
-dia_turno = turno.copy()
-
-# Orden deseado de los días de la semana
-orden_dias = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo']
-
-# Convertir la columna 'dow' a categoría con el orden deseado
-dia_turno['dow'] = pd.Categorical(dia_turno['dow'], categories=orden_dias, ordered=True)
-
-# Agrupa por 'dow' (día de la semana), 'Turno' y 'variable' (nombre de la máquina), y suma los valores de consumo
-consumo_dia_turno = dia_turno.groupby(['dow', 'Turno', 'variable']).sum().reset_index()
-
-# Renombra las columnas según tus preferencias
-consumo_dia_turno.rename(columns={'value': 'Consumo de Energía (KWh)'}, inplace=True)
-
-# Redondea los valores para mostrar enteros
-consumo_dia_turno['Consumo de Energía (KWh)'] = consumo_dia_turno['Consumo de Energía (KWh)'].round(0)
-
-# Agrupa nuevamente para combinar los valores de un día y turno específicos
-consumo_dia_turno_agregado = consumo_dia_turno.groupby(['dow', 'Turno']).sum().reset_index()
-
-# Crea el gráfico de barras utilizando Plotly Express
-fig = px.bar(consumo_dia_turno_agregado, x='Turno', y='Consumo de Energía (KWh)', color='dow',
-             title='Consumo de Energía por Máquina y Turno por Día',
-             labels={'Turno': 'Turno', 'Consumo de Energía (KWh)': 'Consumo (KWh)'},
-             width=900, height=600)
-
-# Ajusta el formato del eje y para mostrar valores enteros
-fig.update_layout(yaxis=dict(tickformat=',d'))
-
-# Ajusta el diseño del gráfico
-fig.update_layout(
-    showlegend=True,
-    legend_title="Día de la Semana",
-    legend=dict(xanchor="left", x=1, font=dict(size=10)),
-)
-
-# Muestra el gráfico
-fig.show()
-
-
-# In[30]:
-
-
-# Agrupa por 'Turno' y 'variable' (nombre de la máquina), y suma los valores de consumo
-consumo_turno = turno.groupby(['Turno', 'variable']).sum().reset_index()
-
-# Renombra las columnas según tus preferencias
-consumo_turno.rename(columns={'value': 'Consumo de Energía (KWh)'}, inplace=True)
-
-# Redondea los valores para mostrar enteros
-consumo_turno['Consumo de Energía (KWh)'] = consumo_turno['Consumo de Energía (KWh)'].round(0)
-
-# Crea el gráfico de barras utilizando Plotly Express
-fig = px.bar(consumo_turno, x='variable', y='Consumo de Energía (KWh)', color='Turno',
-             title='Consumo de Energía por Máquina y Turno',
-             labels={'variable': 'Máquina', 'Consumo de Energía (KWh)': 'Consumo (KWh)'},
-             width=900, height=600)
-
-# Ajusta el formato del eje y para mostrar valores enteros
-fig.update_layout(yaxis=dict(tickformat=',d'))
-
-# Ajusta el diseño del gráfico
-fig.update_layout(
-    showlegend=True,
-    legend_title="Turno",
-    legend=dict(xanchor="left", x=1, font=dict(size=10)),
-)
-
-# Muestra el gráfico
-fig.show()
-
-
-# #### Consumo por típo de día y proceso
-
-# Consumo semana cada línea en el gráfico representa un día de la semana específico, y la posición de la línea en cada punto indica la cantidad de energía consumida en ese día de la semana en cada hora del día.
-
-# In[31]:
-
-
-consumo_maquinas
-
-
-# In[32]:
-
-
-#Planta
-fig = px.line(df_planta, x='hour', y='value', color='dow', # line_group='dow',               
-	labels={'Consumo': 'Consumo (ejemplo)', 'Hora': 'Hora del día'},               
-	title='Consumo horario por Día de la Semana Planta') 
-fig.update_layout(legend_title_text='Día de la Semana',xaxis_title = 'Hora',
-                  yaxis_title = 'kWh')
-fig.show()
-
-
 # **Chiller**
 
-# In[33]:
+# In[22]:
 
 
 #chiller efici
@@ -611,7 +370,7 @@ fig.show()
 
 # **Extrusora Welex 2501**
 
-# In[34]:
+# In[23]:
 
 
 #Extrusora
@@ -625,7 +384,7 @@ fig.show()
 
 # **Espuma**
 
-# In[35]:
+# In[24]:
 
 
 #Espumas
@@ -639,7 +398,7 @@ fig.show()
 
 # **Tubos Colapsibles**
 
-# In[36]:
+# In[25]:
 
 
 #tubos
@@ -653,7 +412,7 @@ fig.show()
 
 # **Termoformadora Gabler 2**
 
-# In[37]:
+# In[26]:
 
 
 #termo
@@ -667,7 +426,7 @@ fig.show()
 
 # **Horno Recocido linea 7**
 
-# In[38]:
+# In[27]:
 
 
 #Horno
@@ -681,7 +440,7 @@ fig.show()
 
 # **Bomba Torre**
 
-# In[39]:
+# In[28]:
 
 
 #Bomba de torre

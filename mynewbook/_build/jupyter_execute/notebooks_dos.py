@@ -161,6 +161,11 @@ eficiencia_chiller_ok = pro.datetime_attributes(eficiencia_chiller_ok)
 df_ea_month = df_ea.groupby(by=["variable"]).resample('M').sum().reset_index().set_index('datetime')
 df_ea_month = pro.datetime_attributes(df_ea_month)
 
+
+#para sacar las graficas por tabla
+df_turno= df_ea.groupby(by=["variable"]).resample('H').sum().reset_index().set_index('datetime')
+df_turno = pro.datetime_attributes(df_turno)
+
 #df_ea_eficiencia = eficiencia_chiller.groupby(by=["variable"]).resample('D').mean().reset_index().set_index('datetime')
 #df_ea_eficiencia = pro.datetime_attributes(df_ea_eficiencia)
 
@@ -203,6 +208,10 @@ df['variable'] = df['variable'].replace(mapeo)
 
 df_energia = df_ea_month[df_ea_month['variable'].isin(valores_a_buscar)]
 df_energia['variable'] = df_energia['variable'].replace(mapeo)
+
+turno = df_turno[df_turno['variable'].isin(valores_a_buscar)]
+turno['variable'] = turno['variable'].replace(mapeo)
+
 
 consumo_maquinas = df_planta[df_planta['variable'].isin(valores_a_buscar)]
 consumo_maquinas['variable'] = consumo_maquinas['variable'].replace(mapeo)
@@ -389,210 +398,3 @@ eficiencia_chiller_ok = eficiencia_chiller_ok.groupby(["hour", "dow"])["value"].
 consumo_maquinas = consumo_maquinas.groupby(["hour", "variable"])["value"].mean().reset_index()
 
 
-
-# #### Consumo Tipico por día Para Carvajal
-
-# Presentamos el análisis del consumo de energía de la planta clasificado por tipo de día. Durante el trimestre examinado, se observa que la planta experimentó un mayor consumo de energía los días viernes y jueves. Asimismo, se destaca una disminución en el consumo durante los fines de semana, siendo el domingo el día con menor consumo, seguido por el sábado.
-
-# In[25]:
-
-
-import plotly.graph_objects as go
-
-colores_Celsia = ['#f37620', '#585a5b', '#fec431', '#1fa1db', '#00be91', '#ca1e48', '#19459a', '#ef966e', '#949495', '#fae364']
-
-# Create the go.Box trace
-trace1 = go.Box(y=df_planta[df_planta['dow']=='lunes']['value']/df_planta[df_planta['dow']=='lunes']['dow'].value_counts()[0],boxpoints='all',name='Lunes',marker_color='#f37620')
-trace2 = go.Box(y=df_planta[df_planta['dow']=='martes']['value']/df_planta[df_planta['dow']=='martes']['dow'].value_counts()[0],boxpoints='all',name='Martes',marker_color='#585a5b')
-trace3 = go.Box(y=df_planta[df_planta['dow']=='miércoles']['value']/df_planta[df_planta['dow']=='miércoles']['dow'].value_counts()[0],boxpoints='all',name='Miércoles',marker_color='#fec431')
-trace4 = go.Box(y=df_planta[df_planta['dow']=='jueves']['value']/df_planta[df_planta['dow']=='jueves']['dow'].value_counts()[0],boxpoints='all',name='Jueves',marker_color='#1fa1db')
-trace5 = go.Box(y=df_planta[df_planta['dow']=='viernes']['value']/df_planta[df_planta['dow']=='viernes']['dow'].value_counts()[0],boxpoints='all',name='Viernes',marker_color='#00be91')
-trace6 = go.Box(y=df_planta[df_planta['dow']=='sábado']['value']/df_planta[df_planta['dow']=='sábado']['dow'].value_counts()[0],boxpoints='all',name='Sábado',marker_color='#ca1e48')
-trace7 = go.Box(y=df_planta[df_planta['dow']=='domingo']['value']/df_planta[df_planta['dow']=='domingo']['dow'].value_counts()[0],boxpoints='all',name='Domingo',marker_color='#19459a')
-
-# Create the layout
-layout = go.Layout(
-    title='Consumo por tipo de día',
-    width=800,
-    height=600,
-    yaxis=dict(title="Consumo kWh"),
-    title_font=dict(size=12)
-)
-
-# Create the figure
-fig = go.Figure(data=[trace1, trace2, trace3, trace4, trace5, trace6, trace7], layout=layout)
-
-# Show the figure
-fig.show()
-
-
-# La gráfica anterior muestra la tendencia de los consumos medidos, en la cual se observa que los domingos tienen una disminución considerable de carga, lo cual puede corresponder a paradas de planta o procesos diferentes que se ejecuten estos días.
-
-# In[26]:
-
-
-# Gráfico de áreas apiladas
-consumo_maquinas['variable'] = consumo_maquinas['variable'].str.capitalize()
-fig = px.area(consumo_maquinas, x='hour', y='value', color='variable', line_group='variable',
-              labels={'value': 'Consumo (kWh)', 'hour': 'Hora del día'},
-              title='Consumo Horario Planta por Proceso')
-
-fig.update_layout(
-    legend_title_text='Máquina',
-    xaxis_title='Hora',
-    yaxis_title='kWh',
-)
-
-fig.show()
-
-
-# Consumo Horario Planta por Proceso: muestra la distribución del consumo de energía en la planta a lo largo del día, desglosado por proceso. Cada área en el gráfico representa un proceso específico, y la altura de cada área indica la cantidad de energía consumida en ese proceso en cada hora del día.
-
-# #### Consumo por típo de día y proceso
-
-# Consumo semana cada línea en el gráfico representa un día de la semana específico, y la posición de la línea en cada punto indica la cantidad de energía consumida en ese día de la semana en cada hora del día.
-
-# In[27]:
-
-
-trace1 = go.Scatter(y=df_planta[df_planta['dow']=='lunes']['value']/df_planta[df_planta['dow']=='lunes']['dow'].value_counts()[0],name='Lunes',marker_color='#f37620', mode='lines')
-trace2 = go.Scatter(y=df_planta[df_planta['dow']=='martes']['value']/df_planta[df_planta['dow']=='martes']['dow'].value_counts()[0],name='Martes',marker_color='#585a5b', mode='lines')
-trace3 = go.Scatter(y=df_planta[df_planta['dow']=='miércoles']['value']/df_planta[df_planta['dow']=='miércoles']['dow'].value_counts()[0],name='Miércoles',marker_color='#fec431', mode='lines')
-trace4 = go.Scatter(y=df_planta[df_planta['dow']=='jueves']['value']/df_planta[df_planta['dow']=='jueves']['dow'].value_counts()[0],name='Jueves',marker_color='#1fa1db', mode='lines')
-trace5 = go.Scatter(y=df_planta[df_planta['dow']=='viernes']['value']/df_planta[df_planta['dow']=='viernes']['dow'].value_counts()[0],name='Viernes',marker_color='#00be91', mode='lines')
-trace6 = go.Scatter(y=df_planta[df_planta['dow']=='sábado']['value']/df_planta[df_planta['dow']=='sábado']['dow'].value_counts()[0],name='Sábado',marker_color='#ca1e48',   mode='lines')
-trace7 = go.Scatter(y=df_planta[df_planta['dow']=='domingo']['value']/df_planta[df_planta['dow']=='domingo']['dow'].value_counts()[0],name='Domingo',marker_color='#19459a', mode='lines')
-
-layout = go.Layout(
-    title='Consumo horario por Día de la Semana Planta',
-    width=800,
-    height=600,
-    yaxis=dict(title="Consumo kWh"),
-    title_font=dict(size=16),
-    xaxis=dict(title="Hora"),
-    legend=dict(title="Día de la Semana")
-)
-
-fig = go.Figure(data=[trace1, trace2, trace3, trace4, trace5, trace6, trace7], layout=layout)
-
-# Show the figure
-fig.show()
-
-
-# **Chiller**
-
-# In[28]:
-
-
-#chiller efici
-fig = px.line(eficiencia_chiller_ok, x='hour', y='value', color='dow', # line_group='dow',               
-	labels={'Consumo': 'Consumo (ejemplo)', 'Hora': 'Hora del día'},               
-	title='Eficiencia Chiller por Día de la Semana ') 
-fig.update_layout(legend_title_text='Día de la Semana',xaxis_title = 'Hora',
-                  yaxis_title = 'kW/TR')
-fig.show()
-
-
-#Chiller
-fig = px.line(ea_chiller_dia, x='hour', y='value', color='dow', # line_group='dow',               
-	labels={'Consumo': 'Consumo (ejemplo)', 'Hora': 'Hora del día'},               
-	title='Consumo horario por Día de la Semana Chiller') 
-fig.update_layout(legend_title_text='Día de la Semana',xaxis_title = 'Hora',
-                  yaxis_title = 'kWh')
-fig.show()
-
-
-# **Extrusora Welex 2501**
-
-# In[29]:
-
-
-#Extrusora
-fig = px.line(ea_extrusora_dia, x='hour', y='value', color='dow', # line_group='dow',               
-	labels={'Consumo': 'Consumo (ejemplo)', 'Hora': 'Hora del día'},               
-	title='Consumo horario por Día de la Semana Extrusora Welex 2501') 
-fig.update_layout(legend_title_text='Día de la Semana',xaxis_title = 'Hora',
-                  yaxis_title = 'kWh')
-fig.show()
-
-
-# **Espuma**
-
-# In[30]:
-
-
-#Espumas
-fig = px.line(ea_espuma_dia, x='hour', y='value', color='dow', # line_group='dow',               
-	labels={'Consumo': 'Consumo (ejemplo)', 'Hora': 'Hora del día'},               
-	title='Consumo horario por Día de la Semana Espuma') 
-fig.update_layout(legend_title_text='Día de la Semana',xaxis_title = 'Hora',
-                  yaxis_title = 'kWh')
-fig.show()
-
-
-# **Tubos Colapsibles**
-
-# In[31]:
-
-
-#tubos
-fig = px.line(ea_tubos_dia, x='hour', y='value', color='dow', # line_group='dow',               
-	labels={'Consumo': 'Consumo (ejemplo)', 'Hora': 'Hora del día'},               
-	title='Consumo horario por Día de la Semana Tubos Colapsibles') 
-fig.update_layout(legend_title_text='Día de la Semana',xaxis_title = 'Hora',
-                  yaxis_title = 'kWh')
-fig.show()
-
-
-# **Termoformadora Gabler 2**
-
-# In[32]:
-
-
-#termo
-fig = px.line(ea_termo_dia, x='hour', y='value', color='dow', # line_group='dow',               
-	labels={'Consumo': 'Consumo (ejemplo)', 'Hora': 'Hora del día'},               
-	title='Consumo horario por Día de la Semana Termoformadora Gabler 2') 
-fig.update_layout(legend_title_text='Día de la Semana',xaxis_title = 'Hora',
-                  yaxis_title = 'kWh')
-fig.show()
-
-
-# **Horno Recocido linea 7**
-
-# In[33]:
-
-
-#Horno
-fig = px.line(ea_horno_dia, x='hour', y='value', color='dow', # line_group='dow',               
-	labels={'Consumo': 'Consumo (ejemplo)', 'Hora': 'Hora del día'},               
-	title='Consumo horario por Día de la Semana Horno Recocido linea 7') 
-fig.update_layout(legend_title_text='Día de la Semana',xaxis_title = 'Hora',
-                  yaxis_title = 'kWh')
-fig.show()
-
-
-# **Bomba Torre**
-
-# In[34]:
-
-
-#Bomba de torre
-
-fig = px.line(ea_bomba_torre_dia, x='hour', y='value', color='dow', # line_group='dow',               
-	labels={'Consumo': 'Consumo (ejemplo)', 'Hora': 'Hora del día'},               
-	title='Consumo horario por Día de la Semana Bomba Torre') 
-fig.update_layout(legend_title_text='Día de la Semana',xaxis_title = 'Hora',
-                  yaxis_title = 'kWh')
-fig.show()
-
-
-# **Conclusiones:**
-# 
-# - Distribución del consumo de energía por máquina y mes: El análisis muestra que la máquina "Energía Activa Extrusora" tiene el mayor consumo de energía, seguida por "Energía Activa Chiller" y "Energía Activa Espumas". Estas tres máquinas representan la mayor parte del consumo total de energía.
-# 
-# - El consumo de energía fue mayor en octubre, seguido por noviembre y agosto. Esto indica que octubre  fue el mes con mayor demanda de energía analizado.
-# 
-# - Consumo por tipo de día: El análisis muestra que los días jueves y viernes tienen un mayor consumo de energía en comparación con los demás días de la semana. Los fines de semana, especialmente los domingos, tienen un consumo más bajo de energía.
-# 
-# - Consumo horario de la planta por proceso: El gráfico muestra la distribución del consumo de energía en la planta a lo largo del día, desglosado por proceso. Se observa que el consumo varía a lo largo del día para cada proceso, con picos de consumo en diferentes momentos.
