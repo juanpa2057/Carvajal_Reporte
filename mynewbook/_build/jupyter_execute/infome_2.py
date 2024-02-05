@@ -389,7 +389,7 @@ consumo_maquinas = consumo_maquinas.groupby(["hour", "variable"])["value"].mean(
 
 # #### Consumo Tipico por día Para Carvajal
 
-# Presentamos el análisis del consumo de energía de la planta clasificado por tipo de día. Durante el trimestre examinado, se observa que la planta experimentó un mayor consumo de energía los días viernes y jueves. Asimismo, se destaca una disminución en el consumo durante los fines de semana, siendo el domingo el día con menor consumo, seguido por el sábado.
+# Presentamos el análisis del consumo de energía de la planta clasificado por tipo de día. Durante el periodo examinado, se observa que la planta experimentó un mayor consumo de energía los días viernes y jueves. Asimismo, se destaca una disminución en el consumo durante los fines de semana, siendo el domingo el día con menor consumo, seguido por el sábado.
 
 # In[25]:
 
