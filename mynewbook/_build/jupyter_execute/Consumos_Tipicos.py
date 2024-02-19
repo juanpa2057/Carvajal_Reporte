@@ -370,7 +370,7 @@ fig.update_layout(
 fig.show()
 
 
-# Consumo Horario Planta por Proceso: muestra la distribución del consumo de energía en la planta a lo largo del día, desglosado por proceso. Cada área en el gráfico representa un proceso específico, y la altura de cada área indica la cantidad de energía consumida en ese proceso en cada hora del día.
+# Consumo Horario Planta por Proceso: muestra el promedio del consumo de energía en la planta a lo largo del día, desglosado por proceso. Cada área en el gráfico representa un proceso específico, y la altura de cada área indica la cantidad de energía promedio consumida en ese proceso en cada hora del día.
 
 # In[23]:
 
@@ -427,7 +427,7 @@ fig.update_layout(
 fig.show()
 
 
-# El consumo de energía durante el periodo de monitoreo, por día de la semana y dividido en tres turnos. Estos turnos se distribuyen de la siguiente manera: el primer turno abarca de 6 am a 2 pm, el segundo turno de 2 pm a 10 pm, y el tercer turno de 10 pm a 6 am. Se destaca que el tercer turno exhibe el mayor consumo de energía en la distribución total de carga energética durante el periodo analizado
+# El consumo de energía durante el periodo de monitoreo, por día de la semana y clasificado en tres turnos. Estos turnos se distribuyen de la siguiente manera: el primer turno abarca de 6 am a 2 pm, el segundo turno de 2 pm a 10 pm, y el tercer turno de 10 pm a 6 am. Se destaca que el tercer turno exhibe el mayor consumo de energía en la distribución total de carga energética durante el periodo analizado
 
 # In[24]:
 

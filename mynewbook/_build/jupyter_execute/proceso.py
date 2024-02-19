@@ -452,13 +452,3 @@ fig.update_layout(legend_title_text='Día de la Semana',xaxis_title = 'Hora',
                   yaxis_title = 'kWh')
 fig.show()
 
-
-# **Conclusiones:**
-# 
-# - Distribución del consumo de energía por máquina y mes: El análisis muestra que la máquina "Energía Activa Extrusora" tiene el mayor consumo de energía, seguida por "Energía Activa Chiller" y "Energía Activa Espumas". Estas tres máquinas representan la mayor parte del consumo total de energía.
-# 
-# - El consumo de energía fue mayor en octubre, seguido por noviembre y agosto. Esto indica que octubre  fue el mes con mayor demanda de energía analizado.
-# 
-# - Consumo por tipo de día: El análisis muestra que los días jueves y viernes tienen un mayor consumo de energía en comparación con los demás días de la semana. Los fines de semana, especialmente los domingos, tienen un consumo más bajo de energía.
-# 
-# - Consumo horario de la planta por proceso: El gráfico muestra la distribución del consumo de energía en la planta a lo largo del día, desglosado por proceso. Se observa que el consumo varía a lo largo del día para cada proceso, con picos de consumo en diferentes momentos.

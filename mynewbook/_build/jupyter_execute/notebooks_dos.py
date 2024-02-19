@@ -249,12 +249,14 @@ import plotly.graph_objects as go
 
 # Crear la tabla
 fig = go.Figure(data=[go.Table(
-    header=dict(values=['Proceso', 'Octubre', 'Noviembre', 'Diciembre']),
+    header=dict(values=['Proceso','Ago', 'Sep','Oct', 'Nov', 'Dic']),
     cells=dict(values=[df_energia_pivot.index, 
+                       df_energia_pivot[8],
+                       df_energia_pivot[9],
                        df_energia_pivot[10],  # Usar los valores formateados
                        df_energia_pivot[11],
                        df_energia_pivot[12]],
-               align=['left', 'center', 'center', 'center']))  # Ajustar la alineación de las celdas
+               align=['left','center', 'center', 'center', 'center', 'center']))  # Ajustar la alineación de las celdas
 ])
 
 # Ajustar el diseño y formato
