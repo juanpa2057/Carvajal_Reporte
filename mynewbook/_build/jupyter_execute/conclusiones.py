@@ -1,16 +1,17 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# ## Carvajal
+# #### Conclusiones y Hallazgos: 
 
-# **Conclusiones y Hallazgos:** 
+# 
 # - Distribución del consumo de energía por máquina y mes: El análisis muestra que la máquina "Energía Activa Extrusora" tiene el mayor consumo kWh de energía, seguida por "Energía Activa Chiller" y "Energía Activa Espumas". Estas tres máquinas representan la mayor parte del consumo kWh total de energía.
 # 
 # - Consumo por tipo de día: El análisis revela que los días jueves y viernes exhiben un mayor consumo de energía, aproximadamente un 3% más alto en comparación con los otros días de la semana. Por otro lado, los fines de semana, particularmente los domingos, muestran una notable disminución del consumo de energía, disminuyendo hasta un 53.2% en comparación con el jueves.
 # 
 # <div style="text-align:center">
 # 
-# ![newplot.png](attachment:newplot.png)
+# ![Consumos dias](imagen/newplot.png)
+# 
 # 
 # </div>
 # 
@@ -21,7 +22,8 @@
 # 
 # <div style="text-align:center">
 # 
-# ![estrusora.png](attachment:estrusora.png)
+# ![Estrusora](imagen/estrusora.png)
+# 
 # 
 # </div>
 # 
@@ -31,3 +33,8 @@
 # - Incremento del factor de carga del chiller Trane. Promedio de carga del chiller Trane es de 50%, se propone llevarlo a porcentajes de carga cercanos al 80% hasta antes de encender chillers auxiliares, teniendo en cuenta que el chiller Trane es el más eficientes los equipos disponibles.
 # 
 # - Con el fin de obtener mayor información de los procesos medidos, será necesario ampliar el alcance del proyecto aumentando el número de variables medidas (físicas y eléctricas). Adicional, se deben medir las ratas de producción de las máquinas que están siendo monitoreadas. Esto con el fin de estimar variaciones en la productividad de la máquina (kWh/Unidad producida). De esta manera se podrá analizar la disciplina operativa que se tenga en los procesos, tiempos muertos de producción o de paro del proceso y posibles estimaciones de costos reales que llevaran a tener información precisa sobre cuales son las acciones que se deben seguir para lograr ahorros significativos.
+# 
+# 
+# **Recomendación adicional:**
+# 
+# Con el fin de obtener mayor información de los procesos medidos, será necesario ampliar el alcance del proyecto aumentando el número de variables medidas (físicas y eléctricas). Adicional, se deben medir las ratas de producción de las máquinas que están siendo monitoreadas. Esto con el fin de estimar variaciones en la productividad de la máquina (kWh/Unidad producida). De esta manera se podrá analizar la disciplina operativa que se tenga en los procesos, tiempos muertos de producción o de paro del proceso y posibles estimaciones de costos reales que llevaran a tener información precisa sobre cuales son las acciones que se deben seguir para lograr ahorros significativos. 
