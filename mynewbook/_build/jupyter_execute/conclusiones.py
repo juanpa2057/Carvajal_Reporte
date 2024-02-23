@@ -34,8 +34,6 @@
 # 
 # </div>
 # 
-# - De acurto a la segmentación de consumo kWh por turno se evidencia que el turno que mas consume energia es el tercero comprendido entre las 22:00 horas hasta las 6:00 horas, lo cual se sugiere validar con personal de planta que acciones se implementan en el proceso que conyeven un mayor consumo energetico a diferencia del primer y segundo turno de operación.
-# 
 # **Recomendación Sistemas de enfriamiento:**
 # - Mejora de aislamiento térmico de tanques. Agua gana aproximadamente 2°C mientras permanece almacenada en el tanque.
 #  
