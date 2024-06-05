@@ -4,8 +4,12 @@
 format: jb-book
 root: intro
 chapters:
-- file: notebooks_dos
-- file: Consumos_Tipicos
-- file: proceso
-- file: conclusiones
+#- file: notebooks_dos
+#- file: Consumos_Tipicos
+#- file: proceso
+#- file: conclusiones
+- file: produccion_solo
+- file: KPI
+- file: chiller
+
 
