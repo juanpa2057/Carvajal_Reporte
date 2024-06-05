@@ -4,6 +4,7 @@
 format: jb-book
 root: intro
 chapters:
+<<<<<<< HEAD
 #- file: notebooks_dos
 #- file: Consumos_Tipicos
 #- file: proceso
@@ -13,3 +14,10 @@ chapters:
 - file: chiller
 
 
+=======
+- file: notebooks_dos
+- file: Consumos_Tipicos
+- file: proceso
+- file: conclusiones
+- file: produccion
+>>>>>>> e59307be222ea993094335c42f53393f4b0e8b9d

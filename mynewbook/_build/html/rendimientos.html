@@ -43,7 +43,11 @@
   <script src="_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
     <script src="_static/documentation_options.js?v=9eb32ce0"></script>
+<<<<<<< HEAD
     <script src="_static/doctools.js?v=888ff710"></script>
+=======
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+>>>>>>> e59307be222ea993094335c42f53393f4b0e8b9d
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=5eb1bb1e"></script>
@@ -179,10 +183,18 @@
             </li>
         </ul>
         <ul class="nav bd-sidenav">
+<<<<<<< HEAD
 <li class="toctree-l1"><a class="reference internal" href="produccion_solo.html">Producción Carvajal</a></li>
 <li class="toctree-l1"><a class="reference internal" href="KPI.html">KPI Carvajal</a></li>
 
 <li class="toctree-l1"><a class="reference internal" href="chiller.html">Rendimientos Chiller</a></li>
+=======
+<li class="toctree-l1"><a class="reference internal" href="notebooks_dos.html">Informe Gestión de Energia</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Consumos_Tipicos.html">Consumo Tipico por día Para Carvajal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proceso.html">Procesos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conclusiones.html">Conclusiones y Hallazgos:</a></li>
+<li class="toctree-l1"><a class="reference internal" href="produccion.html">Cargamos los datos de producción y energía</a></li>
+>>>>>>> e59307be222ea993094335c42f53393f4b0e8b9d
 </ul>
 
     </div>
@@ -343,7 +355,234 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
+<<<<<<< HEAD
   <div class="cell tag_remove-input docutils container">
+=======
+  <div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import pandas as pd
+import numpy as np
+import datetime as dt
+import json
+from datetime import datetime
+
+import plotly.io as pio
+import plotly.graph_objects as go
+import plotly.express as px
+import warnings
+warnings.filterwarnings(&#39;ignore&#39;)
+
+pio.renderers.default = &quot;notebook&quot;
+pio.templates.default = &quot;plotly_white&quot;
+
+
+# this enables relative path imports
+import os
+from dotenv import load_dotenv
+load_dotenv()
+_PROJECT_PATH: str = os.environ[&quot;_project_path&quot;]
+_PICKLED_DATA_FILENAME: str = os.environ[&quot;_pickled_data_filename&quot;]
+
+import sys
+from pathlib import Path
+project_path = Path(_PROJECT_PATH)
+sys.path.append(str(project_path))
+
+import config_v2 as cfg
+
+from library_report_v2 import Cleaning as cln
+from library_report_v2 import Graphing as grp
+from library_report_v2 import Processing as pro
+from library_report_v2 import Configuration as repcfg
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import matplotlib.pyplot as plt
+import plotly.express as px
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>periodo_historico = cfg.BASELINE
+periodo_de_estudio = cfg.STUDY
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>def show_response_contents(df):
+    print(&quot;The response contains:&quot;)
+    print(json.dumps(list(df[&#39;variable&#39;].unique()), sort_keys=True, indent=4))
+    print(json.dumps(list(df[&#39;device&#39;].unique()), sort_keys=True, indent=4))
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>df = pd.read_pickle(project_path / &#39;data&#39; / _PICKLED_DATA_FILENAME)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>df = df.sort_values(by=[&#39;variable&#39;,&#39;datetime&#39;])
+df = pro.datetime_attributes(df)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>df_chiller = df.copy()
+df_chiller = df_chiller[df_chiller[&#39;variable&#39;].isin([&#39;eficiencia-chiller&#39;,&#39;factor-de-potencia&#39;,&#39;potencia-termica&#39;,&#39;potencia-activa&#39;,&#39;factor-carga-chiller&#39;])]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>df_chiller = df_chiller[df_chiller[&#39;device&#39;].isin([&#39;cvl---chiller&#39;])]
+#df_chiller_2 = df_chiller.copy()
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>df_chiller = df_chiller.groupby([&#39;variable&#39;,&#39;hour&#39;])[&#39;value&#39;].mean().reset_index()
+df_chiller
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>variable</th>
+      <th>hour</th>
+      <th>value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>eficiencia-chiller</td>
+      <td>0</td>
+      <td>1.564310</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>eficiencia-chiller</td>
+      <td>1</td>
+      <td>1.566321</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>eficiencia-chiller</td>
+      <td>2</td>
+      <td>1.552693</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>eficiencia-chiller</td>
+      <td>3</td>
+      <td>1.553073</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>eficiencia-chiller</td>
+      <td>4</td>
+      <td>1.808870</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>115</th>
+      <td>potencia-termica</td>
+      <td>19</td>
+      <td>253.811505</td>
+    </tr>
+    <tr>
+      <th>116</th>
+      <td>potencia-termica</td>
+      <td>20</td>
+      <td>249.271254</td>
+    </tr>
+    <tr>
+      <th>117</th>
+      <td>potencia-termica</td>
+      <td>21</td>
+      <td>251.320364</td>
+    </tr>
+    <tr>
+      <th>118</th>
+      <td>potencia-termica</td>
+      <td>22</td>
+      <td>247.366510</td>
+    </tr>
+    <tr>
+      <th>119</th>
+      <td>potencia-termica</td>
+      <td>23</td>
+      <td>260.902465</td>
+    </tr>
+  </tbody>
+</table>
+<p>120 rows × 3 columns</p>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import pandas as pd
+import matplotlib.pyplot as plt
+
+# Filtrar el DataFrame para obtener solo las filas donde la columna &quot;variable&quot; sea &quot;eficiencia-chiller&quot;
+df_eficiencia_chiller = df_chiller[df_chiller[&#39;variable&#39;] == &#39;eficiencia-chiller&#39;]
+
+# Obtener los valores de eficiencia-chiller y factor-de-potencia
+valores_eficiencia_chiller = df_eficiencia_chiller[&#39;value&#39;]
+valores_factor_potencia = df_chiller[df_chiller[&#39;variable&#39;] == &#39;potencia-activa&#39;][&#39;value&#39;]
+
+# Graficar
+plt.scatter(valores_factor_potencia, valores_eficiencia_chiller)
+plt.xlabel(&#39;Potencia Activa&#39;)
+plt.ylabel(&#39;Eficiencia Chiller&#39;)
+plt.title(&#39;Relación entre Potencia Activa y Eficiencia Chiller&#39;)
+plt.grid(True)
+plt.show()
+</pre></div>
+</div>
+</div>
+>>>>>>> e59307be222ea993094335c42f53393f4b0e8b9d
 <div class="cell_output docutils container">
 <img alt="_images/80392dbd3b2dace8ae74f722b0b0e2208247223a210dfb4592a7f5122b54a0ca.png" src="_images/80392dbd3b2dace8ae74f722b0b0e2208247223a210dfb4592a7f5122b54a0ca.png" />
 </div>
